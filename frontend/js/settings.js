@@ -1,13 +1,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("sm-settings-form");
     const obdResult = document.getElementById("obd-test-result");
-    const langSwitcher = document.getElementById("sm-lang-switcher");
+    const btnLogout = document.getElementById("btn-logout");
 
-    if (langSwitcher && window.I18n) {
-        langSwitcher.value = I18n.currentLang;
-        langSwitcher.addEventListener("change", (e) => {
-            I18n.setLang(e.target.value);
-        });
+    if (btnLogout && window.ApiService) {
+        btnLogout.addEventListener("click", () => ApiService.logout());
     }
 
     async function loadSettingsForm() {
@@ -23,7 +20,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             setVal("set-company-name", settings.company_name || "ServisMaster OS");
             setVal("set-company-pib", settings.company_pib || "");
+            setVal("set-company-mb", settings.company_mb || "");
             setVal("set-company-address", settings.company_address || "");
+            setVal("set-company-city", settings.company_city || "");
             setVal("set-company-phone", settings.company_phone || "");
             setVal("set-company-bank", settings.company_bank_acc || "");
             setVal("set-currency", settings.currency_base || "RSD");
@@ -31,6 +30,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             setVal("set-obd-mode", settings.obd_mode || "simulation");
             setVal("set-obd-port", settings.obd_com_port || "COM3");
             setVal("set-obd-baud", settings.obd_baudrate || "38400");
+            setVal("set-wa-enabled", settings.whatsapp_enabled || "true");
+            setVal("set-wa-phone", settings.whatsapp_phone || "");
+            setVal("set-wa-greeting", settings.whatsapp_greeting || "Poštovani, status vašeg vozila možete pratiti na linku:");
+            setVal("set-tg-enabled", settings.telegram_enabled || "false");
+            setVal("set-tg-token", settings.telegram_bot_token || "");
+            setVal("set-tg-chat", settings.telegram_chat_id || "");
             setVal("set-fiscal-mode", settings.fiscal_mode || "internal");
             setVal("set-fiscal-url", settings.fiscal_pfr_url || "http://localhost:8989/api/v3/invoices");
             setVal("set-fiscal-pac", settings.fiscal_pac || "");
@@ -44,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const badge = document.getElementById("settings-tier-badge");
             if (badge) {
                 badge.textContent = `${tier} EDITION`;
-                badge.style.background = tier === "ULTIMATE" ? "#4f46e5" : (tier === "PRO" ? "#059669" : "#475569");
+                badge.style.background = tier === "ULTIMATE" ? "#d97706" : (tier === "PRO" ? "#059669" : "#475569");
                 badge.style.color = "#fff";
             }
 
@@ -65,12 +70,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await res.json();
                 if (res.ok) {
                     await loadSettingsForm();
-                    alert(`Podešavanja sačuvana! Aktivan paket: ${(data.license_tier || "core").toUpperCase()}`);
-                } else {
-                    alert("Greška: " + (data.detail || "Neuspešno čuvanje."));
+                    if (window.showObdModal) {
+                        window.showObdModal(
+                            I18n.currentLang === "en" ? "✅ Settings Saved" : "✅ Podešavanja sačuvana",
+                            `<p style="margin:0; font-size:0.95rem;">${I18n.currentLang === "en" ? "Active license tier:" : "Aktivni licencni paket:"} <strong>${(data.license_tier || "core").toUpperCase()} EDITION</strong></p>`
+                        );
+                    }
                 }
             } catch (err) {
-                alert("Mrežna greška pri čuvanju podešavanja.");
+                console.error(err);
             }
         });
     }
@@ -82,30 +90,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (res.ok) await loadSettingsForm();
     });
 
-    // Test OBD-II (Backend Serial COM ili Simulacija)
     document.getElementById("btn-test-obd")?.addEventListener("click", async () => {
-        obdResult.innerHTML = "⏳ Povezivanje sa OBD-II interfejsom...";
-        try {
-            const res = await fetch("/api/v1/settings/obd/scan");
-            const data = await res.json();
-            if (!res.ok) {
-                obdResult.innerHTML = `<span style="color:#ef4444; font-weight:700;">❌ ${data.detail || "Greška pri povezivanju"}</span>`;
-                return;
-            }
-            const list = (data.dtc || []).map(d => `<li><strong>${d.code}</strong>: ${d.description}</li>`).join("");
-            obdResult.innerHTML = `<div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px; border-radius:8px;">
-                <strong>✅ Režim: ${data.mode.toUpperCase()} (${data.port})</strong>
-                <ul style="margin:6px 0 0 18px;">${list || "<li>Nema zabeleženih grešaka (0 DTC).</li>"}</ul>
-            </div>`;
-        } catch (err) {
-            obdResult.innerHTML = `<span style="color:#ef4444;">❌ Greška u komunikaciji sa serverom.</span>`;
+        if (window.triggerObdDiagnosticModal) {
+            window.triggerObdDiagnosticModal();
         }
     });
 
-    // Web Bluetooth uparivanje za ELM327 BLE uređaje direktno iz Chrome/Edge pretraživača
     document.getElementById("btn-web-bt")?.addEventListener("click", async () => {
         if (!navigator.bluetooth) {
-            obdResult.innerHTML = `<span style="color:#ef4444; font-weight:700;">❌ Vaš pretraživač ne podržava Web Bluetooth (koristite Chrome ili Edge na računaru/Androidu).</span>`;
+            obdResult.innerHTML = `<span style="color:#ef4444; font-weight:700;">❌ Vaš pretraživač ne podržava Web Bluetooth (koristite Chrome ili Edge).</span>`;
             return;
         }
         try {

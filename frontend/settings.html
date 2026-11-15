@@ -16,17 +16,11 @@
             <div class="brand-text-container">
                 <div class="brand-title-row">
                     <h1 class="sm-company-name">ServisMaster OS</h1>
-                    <span class="badge" id="settings-tier-badge">CORE EDITION</span>
+                    <span class="badge" id="settings-tier-badge">ULTIMATE EDITION</span>
                 </div>
             </div>
         </div>
-        <div style="display:flex; gap:8px; align-items:center;">
-            <select id="sm-lang-switcher" style="padding:6px 10px; border-radius:8px; font-weight:700;">
-                <option value="sr">🇷🇸 SR</option>
-                <option value="en">🇬🇧 EN</option>
-            </select>
-            <button id="btn-logout" class="btn-secondary header-logout-btn" data-i18n="header.logout">Odjava</button>
-        </div>
+        <button id="btn-logout" class="btn-secondary header-logout-btn" data-i18n="header.logout">Odjava</button>
     </header>
 
     <nav class="nav-links">
@@ -42,21 +36,29 @@
         <form id="sm-settings-form" enctype="multipart/form-data">
             <!-- 1. PODACI O AUTO-SERVISU I WHITE-LABEL LOGO -->
             <section class="card">
-                <h2>🏢 Podaci o auto-servisu & Brendiranje (White-Label)</h2>
+                <h2 data-i18n="settings.company_section">🏢 1. Podaci o auto-servisu & Brendiranje (White-Label)</h2>
                 <div class="row">
                     <div class="form-group">
                         <label>Naziv auto-servisa</label>
-                        <input type="text" name="company_name" id="set-company-name" placeholder="ServisMaster OS">
+                        <input type="text" name="company_name" id="set-company-name" placeholder="npr. Auto Centar Master">
                     </div>
                     <div class="form-group">
                         <label>PIB / Poreski broj</label>
                         <input type="text" name="company_pib" id="set-company-pib" placeholder="100000000">
                     </div>
+                    <div class="form-group">
+                        <label>Matični broj (MB)</label>
+                        <input type="text" name="company_mb" id="set-company-mb" placeholder="20000000">
+                    </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label>Adresa i grad</label>
-                        <input type="text" name="company_address" id="set-company-address" placeholder="Ulica i broj, Grad">
+                        <label>Ulica i broj</label>
+                        <input type="text" name="company_address" id="set-company-address" placeholder="Ulica i broj">
+                    </div>
+                    <div class="form-group">
+                        <label>Grad</label>
+                        <input type="text" name="company_city" id="set-company-city" placeholder="Grad">
                     </div>
                     <div class="form-group">
                         <label>Telefon servisa</label>
@@ -80,23 +82,23 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label>Logo servisa i Favicon (PNG/JPG — Ultimate paket)</label>
+                        <label>Logo servisa i Favicon (PNG/JPG)</label>
                         <input type="file" name="company_logo" id="set-company-logo" accept="image/png,image/jpeg,image/webp">
                         <div style="margin-top:8px; display:flex; align-items:center; gap:12px;">
-                            <img src="/company-logo.png" class="sm-company-logo" style="max-height:40px; display:none; border-radius:6px; background:#fff; padding:4px;">
+                            <img src="/company-logo.png" class="sm-company-logo" style="max-height:42px; display:none; border-radius:6px; background:#fff; padding:4px; border:1px solid #cbd5e1;">
                             <button type="button" id="btn-remove-logo" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;">Ukloni logo</button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Licencni ključ (Activation Key)</label>
-                        <input type="text" name="license_key" id="set-license-key" placeholder="SM-XXXX-XXXX-XXXX" style="font-family:monospace; font-weight:700; text-transform:uppercase;">
+                        <input type="text" name="license_key" id="set-license-key" placeholder="SM-ULTIMATE-2026-MASTER" style="font-family:monospace; font-weight:700; text-transform:uppercase;">
                     </div>
                 </div>
             </section>
 
             <!-- 2. OBD-II & BLUETOOTH DIJAGNOSTIKA -->
             <section class="card">
-                <h2>🔌 OBD-II & Bluetooth Čitač Grešaka (ELM327)</h2>
+                <h2 data-i18n="settings.obd_section">🔌 2. OBD-II & Bluetooth Čitač Grešaka (ELM327)</h2>
                 <div class="row">
                     <div class="form-group">
                         <label>Režim povezivanja dijagnostike</label>
@@ -126,9 +128,48 @@
                 <div id="obd-test-result" style="margin-top:10px; font-size:0.85rem;"></div>
             </section>
 
-            <!-- 3. FISKALIZACIJA (PFR) -->
+            <!-- 3. WHATSAPP & TELEGRAM NOTIFIKACIJE -->
             <section class="card">
-                <h2>🧾 Fiskalizacija i Računi (PFR Podešavanja)</h2>
+                <h2 data-i18n="settings.messaging_section">💬 3. WhatsApp & Telegram Obaveštenja</h2>
+                <div class="row">
+                    <div class="form-group">
+                        <label>WhatsApp poruke klijentima</label>
+                        <select name="whatsapp_enabled" id="set-wa-enabled">
+                            <option value="true">Uključeno (Prikaži 📱 WA dugme na nalozima)</option>
+                            <option value="false">Isključeno</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp broj servisa (opciono)</label>
+                        <input type="text" name="whatsapp_phone" id="set-wa-phone" placeholder="npr. 381641234567">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tekst uvodne WhatsApp poruke klijentu</label>
+                    <input type="text" name="whatsapp_greeting" id="set-wa-greeting" placeholder="Poštovani, status vašeg vozila možete pratiti na linku:">
+                </div>
+                <div class="row" style="margin-top:8px;">
+                    <div class="form-group">
+                        <label>Telegram Bot Obaveštenja</label>
+                        <select name="telegram_enabled" id="set-tg-enabled">
+                            <option value="false">Isključeno</option>
+                            <option value="true">Uključeno (Šalji alarme na Telegram)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram Bot Token (@BotFather)</label>
+                        <input type="password" name="telegram_bot_token" id="set-tg-token" placeholder="npr. 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram Chat ID</label>
+                        <input type="text" name="telegram_chat_id" id="set-tg-chat" placeholder="npr. 7815212093">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. FISKALIZACIJA (PFR) -->
+            <section class="card">
+                <h2 data-i18n="settings.fiscal_section">🧾 4. Fiskalizacija i Računi (PFR Podešavanja)</h2>
                 <div class="row">
                     <div class="form-group">
                         <label>Način izdavanja računa</label>
@@ -155,9 +196,9 @@
                 </div>
             </section>
 
-            <!-- 4. SMTP EMAIL ALARMI -->
+            <!-- 5. SMTP EMAIL ALARMI -->
             <section class="card">
-                <h2>📧 SMTP Podešavanja za Email / Podsetnike</h2>
+                <h2 data-i18n="settings.smtp_section">📧 5. SMTP Podešavanja za Email Podsetnike</h2>
                 <div class="row">
                     <div class="form-group">
                         <label>SMTP Host</label>
@@ -184,6 +225,7 @@
 
     <script src="/static/js/api.js"></script>
     <script src="/static/js/settings.js"></script>
+    <script src="/static/js/help.js"></script>
     <script src="/static/js/i18n.js"></script>
 </body>
 </html>

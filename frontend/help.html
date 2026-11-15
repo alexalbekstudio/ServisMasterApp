@@ -1,96 +1,338 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ServisMasterOS — Uputstvo za korišćenje</title>
-    <link rel="icon" type="image/png" href="/static/img/logo-a.png">
+    <title>ServisMaster OS — Manual</title>
+    <link rel="icon" type="image/png" href="/favicon.ico">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/app.css">
-    <meta name="theme-color" content="#0f172a">
     <style>
-        .help-content {
-            font-size: 0.95rem;
-            line-height: 1.7;
+        .manual-wrap {
+            text-align: left !important;
+            line-height: 1.26 !important;
+            color: #1e293b;
+            font-size: 0.9rem;
         }
-        .help-content h1 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+        .manual-wrap h1 {
+            font-size: 1.28rem !important;
+            margin: 0 0 2px 0 !important;
+            color: #0f172a;
         }
-        .help-content h2 {
-            font-size: 1.3rem;
-            margin-top: 32px;
-            margin-bottom: 12px;
-            color: var(--accent);
-            border-bottom: 2px solid var(--card-border);
-            padding-bottom: 6px;
+        .manual-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin: 0 0 10px 0 !important;
         }
-        .help-content h3 {
-            font-size: 1.05rem;
-            margin-top: 20px;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+        .manual-toc {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
         }
-        .help-content p { margin-bottom: 12px; }
-        .help-content ul, .help-content ol {
-            margin-left: 24px;
-            margin-bottom: 12px;
+        .manual-toc-title {
+            font-weight: 700;
+            color: #b45309;
+            font-size: 0.88rem;
+            margin: 0 0 4px 0;
         }
-        .help-content li { margin-bottom: 6px; }
-        .help-content code {
-            background: var(--gray-100);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-family: var(--font-mono);
+        .manual-toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+            gap: 3px 10px;
         }
-        .help-content strong { color: var(--text-primary); }
-        .help-content hr {
-            border: none;
-            border-top: 1px solid var(--card-border);
-            margin: 24px 0;
-        }
-        .help-toc {
-            background: var(--bg-subtle);
-            padding: 16px;
-            border-radius: var(--radius-md);
-            margin-bottom: 24px;
-        }
-        .help-toc h2 { margin-top: 0; border: none; }
-        .help-toc ol { margin-left: 20px; }
-        .help-toc a {
-            color: var(--accent);
+        .manual-toc-grid a {
+            color: #b45309;
             text-decoration: none;
+            font-size: 0.84rem;
             font-weight: 600;
+            padding: 1px 0;
+            display: block;
+            cursor: pointer;
         }
-        .help-toc a:hover { text-decoration: underline; }
+        .manual-toc-grid a:hover {
+            text-decoration: underline;
+            color: #92400e;
+        }
+        .manual-sec {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 6px;
+            margin-top: 6px;
+            scroll-margin-top: 70px;
+        }
+        .manual-sec h2 {
+            font-size: 0.98rem !important;
+            color: #b45309 !important;
+            margin: 0 0 3px 0 !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+        .manual-list {
+            list-style: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .manual-list li {
+            position: relative;
+            padding-left: 12px !important;
+            margin: 2px 0 !important;
+            font-size: 0.85rem !important;
+            line-height: 1.26 !important;
+            color: #1e293b;
+        }
+        .manual-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #d97706;
+            font-weight: bold;
+        }
+        .manual-code {
+            background: #f1f5f9;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.81rem;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="brand-wrapper">
-            <img src="/static/img/logo-a.png" alt="Logo" class="brand-logo">
+            <img src="/company-logo.png" alt="Logo" class="brand-logo sm-company-logo" style="display:none;">
             <div class="brand-text-container">
                 <div class="brand-title-row">
-                    <h1>Uputstvo za korišćenje</h1>
-                    <span class="badge">Help</span>
+                    <h1 id="help-header-title">Uputstvo za korišćenje</h1>
+                    <span class="badge">HELP</span>
                 </div>
-                <img src="/static/img/logo-text.png" alt="Studio" class="brand-subtext-img">
             </div>
         </div>
-        <button id="btn-download-pdf" class="btn-secondary header-logout-btn" style="margin-right: 8px;">📥 PDF</button>
-        <button id="btn-back" class="btn-secondary header-logout-btn">← Nazad</button>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" id="btn-download-pdf" class="btn-secondary header-logout-btn">📄 PDF</button>
+            <button type="button" id="btn-back" class="btn-secondary header-logout-btn">← Nazad</button>
+        </div>
     </header>
 
-    <main class="card">
-        <div class="help-content" id="help-content">
-            <p style="text-align: center; color: var(--text-muted);">Učitavanje uputstva...</p>
-        </div>
+    <main>
+        <section class="card" id="help-content-box" style="padding:14px 18px;"></section>
     </main>
 
-    <script src="/static/js/api.js"></script>
-    <script src="/static/js/help-page.js"></script>
-    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/api.js?v=99"></script>
+    <script src="/static/js/i18n.js?v=99"></script>
+    <script>
+        const SM_MANUAL_CONTENT = {
+            sr: `
+                <div class="manual-wrap">
+                    <h1>ServisMaster OS — Korisničko uputstvo</h1>
+                    <p class="manual-meta">Verzija 2.4 Commercial · Poslednja izmena: Novembar 2026.</p>
+                    <div class="manual-toc">
+                        <div class="manual-toc-title">Sadržaj (kliknite na sekciju za skok)</div>
+                        <div class="manual-toc-grid">
+                            <a data-jump="sec-1">1. Prvi koraci</a>
+                            <a data-jump="sec-2">2. Prijem vozila i OCR</a>
+                            <a data-jump="sec-3">3. Radni nalozi</a>
+                            <a data-jump="sec-4">4. Magacin delova</a>
+                            <a data-jump="sec-5">5. SMS podsetnici</a>
+                            <a data-jump="sec-6">6. Kontrolna tabla</a>
+                            <a data-jump="sec-7">7. Klijentski portal i PDF</a>
+                            <a data-jump="sec-8">8. Podešavanja i Licenca</a>
+                        </div>
+                    </div>
+                    <div class="manual-sec" id="sec-1">
+                        <h2>1. Prvi koraci i prijava</h2>
+                        <ul class="manual-list">
+                            <li><strong>Prijava:</strong> Otvorite <span class="manual-code">http://localhost:8000/login</span>, unesite email i lozinku i kliknite <strong>Prijavi se</strong>.</li>
+                            <li><strong>Registracija servisa:</strong> Otvorite <span class="manual-code">http://localhost:8000/register</span> i unesite podatke o radionici i vlasniku.</li>
+                            <li><strong>Promena jezika:</strong> Kliknite na dugme <strong>🇷🇸 SR / 🇬🇧 EN</strong> u gornjem desnom uglu za trenutni prevod cele aplikacije.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-2">
+                        <h2>2. Prijem vozila, OCR kamera i OBD-II</h2>
+                        <ul class="manual-list">
+                            <li><strong>Pretraga klijenta:</strong> Ukucajte 2 slova imena ili broja telefona u polje <em>Pretraga</em> ili <em>Ime i prezime</em> i izaberite klijenta i vozilo iz padajuće liste.</li>
+                            <li><strong>Kamera uživo (OCR) i VIN:</strong> Skenirajte saobraćajnu dozvolu kamerom ili unesite 17-cifreni VIN broj za automatsko prepoznavanje vozila.</li>
+                            <li><strong>Zapisnik oštećenja:</strong> Kliknite direktno na dijagram karoserije da označite ogrebotine ili udubljenja pre prijema.</li>
+                            <li><strong>OBD-II dijagnostika:</strong> Kliknite na <strong>🔌 OBD-II</strong> u zaglavlju za očitavanje grešaka i kliknite <strong>➕ Upiši u opis kvara</strong>.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-3">
+                        <h2>3. Radni nalozi</h2>
+                        <ul class="manual-list">
+                            <li><strong>Statusi popravke:</strong> Prijem → Dijagnostika → Čeka delove → U radu → Završeno → Preuzeto.</li>
+                            <li><strong>Dodavanje stavki (+ Stavka):</strong> Dodajte <strong>⚙️ Rezervni deo</strong> (skida sa stanja magacina) ili <strong>🔧 Usluga / Rad</strong> (dodaje rad na račun).</li>
+                            <li><strong>Dodatni rad:</strong> Štiklirajte <strong>⚠️ Traži odobrenje</strong> kako bi klijent na svom telefonu odobrio dodatni trošak.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-4">
+                        <h2>4. Magacin delova</h2>
+                        <ul class="manual-list">
+                            <li><strong>Unos na stanje:</strong> Skenirajte barkod kamerom (<strong>📷 Skeniraj kod</strong>) ili unesite šifru artikla (SKU), naziv, prodajnu cenu i količinu.</li>
+                            <li><strong>Kritične zalihe:</strong> Artikli čija količina padne ispod minimuma automatski dobijaju crveni alarm za nabavku.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-5">
+                        <h2>5. SMS i Email podsetnici</h2>
+                        <ul class="manual-list">
+                            <li><strong>Automatski podsetnici:</strong> Jednim klikom pošaljite obaveštenja svim vlasnicima kojima danas dospeva termin za redovan servis.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-6">
+                        <h2>6. Kontrolna tabla (Analitika)</h2>
+                        <ul class="manual-list">
+                            <li><strong>KPI pokazatelji i grafikoni:</strong> Pregled mesečnog prihoda, prosečnog računa (AOV), strukture zarade (Rad vs. Delovi), top 5 delova i učinka majstora.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-7">
+                        <h2>7. Klijentski portal, PDF računi i WhatsApp</h2>
+                        <ul class="manual-list">
+                            <li><strong>PDF radni nalog (📄 SR / 📄 EN):</strong> Generiše zvaničan PDF dokument na srpskom ili engleskom sa vašim logotipom i NBS IPS QR kodom.</li>
+                            <li><strong>Deljenje sa klijentom:</strong> Kliknite na <strong>Link</strong> za otvaranje klijentskog portala ili <strong>📱 WA</strong> za direktno slanje linka na WhatsApp.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-8">
+                        <h2>8. Podešavanja, Brendiranje i Licenca</h2>
+                        <ul class="manual-list">
+                            <li><strong>White-Label brendiranje:</strong> U tabu <strong>⚙️ Podešavanja</strong> unesite naziv servisa, PIB, matični broj, adresu, tekući račun i otpremite svoj logo.</li>
+                            <li><strong>OBD-II, Notifikacije i Fiskalizacija:</strong> Podesite režim dijagnostike, WhatsApp uvodnu poruku, Telegram Bot i Interni QR ili PFR (LPFR/VPFR) račun.</li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            en: `
+                <div class="manual-wrap">
+                    <h1>ServisMaster OS — User & Technical Manual</h1>
+                    <p class="manual-meta">Version 2.4 Commercial · Last updated: November 2026.</p>
+                    <div class="manual-toc">
+                        <div class="manual-toc-title">Table of Contents (click to jump to section)</div>
+                        <div class="manual-toc-grid">
+                            <a data-jump="sec-1">1. Getting Started</a>
+                            <a data-jump="sec-2">2. Vehicle Reception & OCR</a>
+                            <a data-jump="sec-3">3. Work Orders</a>
+                            <a data-jump="sec-4">4. Inventory</a>
+                            <a data-jump="sec-5">5. SMS Reminders</a>
+                            <a data-jump="sec-6">6. Dashboard</a>
+                            <a data-jump="sec-7">7. Customer Portal & PDF</a>
+                            <a data-jump="sec-8">8. Settings & License</a>
+                        </div>
+                    </div>
+                    <div class="manual-sec" id="sec-1">
+                        <h2>1. Getting Started & Login</h2>
+                        <ul class="manual-list">
+                            <li><strong>Sign In:</strong> Open <span class="manual-code">http://localhost:8000/login</span>, enter your email and password and click <strong>Sign In</strong>.</li>
+                            <li><strong>Register Workshop:</strong> Open <span class="manual-code">http://localhost:8000/register</span> and fill in your workshop and owner details.</li>
+                            <li><strong>Language Switch:</strong> Click <strong>🇷🇸 SR / 🇬🇧 EN</strong> in the top-right corner to translate the entire application instantly.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-2">
+                        <h2>2. Vehicle Reception, OCR Camera & OBD-II</h2>
+                        <ul class="manual-list">
+                            <li><strong>Smart Customer Search:</strong> Type 2 letters of a customer's name or phone number in <em>Search</em> or <em>Full name</em> and select the customer and vehicle from the dropdown.</li>
+                            <li><strong>Live Camera (OCR) & VIN:</strong> Scan the registration card via camera or enter a 17-character VIN for automatic vehicle recognition.</li>
+                            <li><strong>Body Damage Report:</strong> Click directly on the vehicle body diagram to mark scratches or dents before reception.</li>
+                            <li><strong>OBD-II Diagnostics:</strong> Click <strong>🔌 OBD-II</strong> in the header to scan ECU fault codes and click <strong>➕ Insert into Fault Description</strong>.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-3">
+                        <h2>3. Work Orders</h2>
+                        <ul class="manual-list">
+                            <li><strong>Repair Statuses:</strong> Received → Diagnostics → Waiting for parts → In progress → Completed → Delivered.</li>
+                            <li><strong>Adding Items (+ Item):</strong> Add a <strong>⚙️ Spare Part</strong> (deducts from inventory stock) or <strong>🔧 Labor / Service</strong> (adds labor cost to invoice).</li>
+                            <li><strong>Additional Work Approval:</strong> Check <strong>⚠️ Additional work — requires customer approval</strong> so the owner can approve extra costs on their phone.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-4">
+                        <h2>4. Spare Parts Inventory</h2>
+                        <ul class="manual-list">
+                            <li><strong>Stock Entry:</strong> Scan a barcode via camera (<strong>📷 Scan Barcode</strong>) or enter item SKU, part name, selling price and quantity.</li>
+                            <li><strong>Low Stock Alerts:</strong> Items falling below the minimum threshold automatically trigger a red restocking alert.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-5">
+                        <h2>5. SMS & Email Reminders</h2>
+                        <ul class="manual-list">
+                            <li><strong>Automated Reminders:</strong> Send notifications with a single click to all vehicle owners scheduled for regular maintenance today.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-6">
+                        <h2>6. Dashboard & Analytics</h2>
+                        <ul class="manual-list">
+                            <li><strong>KPIs & Charts:</strong> Monitor monthly revenue, average ticket (AOV), revenue breakdown (Labor vs. Parts), top 5 best-selling parts and mechanic performance.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-7">
+                        <h2>7. Customer Portal, PDF Invoices & WhatsApp</h2>
+                        <ul class="manual-list">
+                            <li><strong>PDF Work Order (📄 SR / 📄 EN):</strong> Generates an official PDF invoice in Serbian or English with your custom logo and instant payment QR code.</li>
+                            <li><strong>Customer Sharing:</strong> Click <strong>Link</strong> to open the live customer tracking portal or <strong>📱 WA</strong> to send the tracking link directly via WhatsApp.</li>
+                        </ul>
+                    </div>
+                    <div class="manual-sec" id="sec-8">
+                        <h2>8. Settings, Branding & License</h2>
+                        <ul class="manual-list">
+                            <li><strong>White-Label Branding:</strong> In <strong>⚙️ Settings</strong>, enter your workshop name, Tax ID, registration number, address, bank account and upload your logo.</li>
+                            <li><strong>OBD-II, Notifications & Fiscal PFR:</strong> Configure diagnostic connection mode, WhatsApp greeting template, Telegram Bot and Internal QR or Fiscal PFR invoicing.</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        };
+
+        window.renderHelpManual = function () {
+            const lang = (window.I18n && I18n.currentLang) || localStorage.getItem("lang") || "sr";
+            const box = document.getElementById("help-content-box");
+            if (box) {
+                box.innerHTML = SM_MANUAL_CONTENT[lang] || SM_MANUAL_CONTENT.sr;
+                box.querySelectorAll("[data-jump]").forEach(a => {
+                    a.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const target = document.getElementById(a.getAttribute("data-jump"));
+                        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+                    });
+                });
+            }
+            const titleEl = document.getElementById("help-header-title");
+            if (titleEl) titleEl.textContent = lang === "en" ? "User Manual" : "Uputstvo za korišćenje";
+            const backBtn = document.getElementById("btn-back");
+            if (backBtn) backBtn.textContent = lang === "en" ? "← Back" : "← Nazad";
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            window.renderHelpManual();
+
+            document.getElementById("btn-back")?.addEventListener("click", () => {
+                if (window.history.length > 1 && document.referrer) {
+                    window.history.back();
+                } else {
+                    window.location.href = "/";
+                }
+            });
+
+            document.getElementById("btn-download-pdf")?.addEventListener("click", async (e) => {
+                const btn = e.currentTarget;
+                const orig = btn.textContent;
+                btn.textContent = "⏳...";
+                try {
+                    const headers = (window.ApiService && ApiService.getHeaders) ? ApiService.getHeaders() : {};
+                    const res = await fetch("/api/v1/help/pdf", { headers });
+                    if (!res.ok) throw new Error("PDF error");
+                    const blob = await res.blob();
+                    window.open(URL.createObjectURL(blob), "_blank");
+                } catch (err) {
+                    window.print();
+                } finally {
+                    btn.textContent = orig;
+                }
+            });
+
+            // Kad god korisnik klikne na dugme za jezik (SR / EN), odmah prebaci i uputstvo
+            document.addEventListener("click", (e) => {
+                if (e.target && e.target.id === "btn-lang") {
+                    setTimeout(() => window.renderHelpManual(), 10);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
