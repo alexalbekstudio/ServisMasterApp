@@ -22,8 +22,9 @@ from app.services.ips_qr_service import IpsQrService
 
 def resolve_logo_path(custom_path: str = None) -> str:
     """Pronalazi apsolutnu putanju do logotipa u projektu."""
-    if custom_path and os.path.isabs(custom_path) and os.path.exists(custom_path):
-        return custom_path
+    uploaded_logo = Path(__file__).resolve().parent.parent.parent / "company-logo.png"
+    if uploaded_logo.exists() and uploaded_logo.is_file():
+        return str(uploaded_logo)
 
     current_dir = Path(__file__).resolve().parent
     search_dirs = [
@@ -118,10 +119,18 @@ class PdfService:
         configured_logo = getattr(shop, 'logo_path', None)
         found_logo_path = resolve_logo_path(configured_logo)
 
-        shop_info = f"""<b>{shop.name}</b><br/>
-{shop.address or ''}, {shop.city or ''}<br/>
-Tel: {shop.phone or '-'} | PIB: {shop.pib or '-'}<br/>
-MB: {shop.maticni_broj or '-'}
+        from app.api.v1.endpoints.settings import read_settings
+        cfg = read_settings()
+        s_name = cfg.get("company_name") or shop.name
+        s_addr = cfg.get("company_address") or f"{shop.address or ''}, {shop.city or ''}".strip(", ")
+        s_phone = cfg.get("company_phone") or shop.phone or "-"
+        s_pib = cfg.get("company_pib") or shop.pib or "-"
+        s_mb = cfg.get("company_mb") or shop.maticni_broj or "-"
+
+        shop_info = f"""<b>{s_name}</b><br/>
+{s_addr}<br/>
+Tel: {s_phone} | PIB: {s_pib}<br/>
+MB: {s_mb}
 """
         order_meta = f"""<b>RADNI NALOG br: #{work_order.order_number}</b><br/>
 Datum prijema: {work_order.received_at.strftime('%d.%m.%Y %H:%M')}<br/>
@@ -254,10 +263,18 @@ Kilometraža: {work_order.mileage_at_reception:,} km
         configured_logo = getattr(shop, 'logo_path', None)
         found_logo_path = resolve_logo_path(configured_logo)
 
-        shop_info = f"""<b>{shop.name}</b><br/>
-{shop.address or ''}, {shop.city or ''}<br/>
-Phone: {shop.phone or '-'} | Tax ID: {shop.pib or '-'}<br/>
-Reg. No: {shop.maticni_broj or '-'}
+        from app.api.v1.endpoints.settings import read_settings
+        cfg = read_settings()
+        s_name = cfg.get("company_name") or shop.name
+        s_addr = cfg.get("company_address") or f"{shop.address or ''}, {shop.city or ''}".strip(", ")
+        s_phone = cfg.get("company_phone") or shop.phone or "-"
+        s_pib = cfg.get("company_pib") or shop.pib or "-"
+        s_mb = cfg.get("company_mb") or shop.maticni_broj or "-"
+
+        shop_info = f"""<b>{s_name}</b><br/>
+{s_addr}<br/>
+Phone: {s_phone} | Tax ID: {s_pib}<br/>
+Reg. No: {s_mb}
 """
         order_meta = f"""<b>WORK ORDER #: {work_order.order_number}</b><br/>
 Received: {work_order.received_at.strftime('%d.%m.%Y %H:%M')}<br/>

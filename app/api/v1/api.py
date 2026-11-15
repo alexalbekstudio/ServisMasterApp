@@ -10,6 +10,7 @@ from app.api.v1.endpoints import (
     ocr,
     parts,
     reminders,
+    settings,
     vehicles,
     vin,
     work_orders,
@@ -28,3 +29,4 @@ api_router.include_router(parts.router, prefix="/parts", tags=["Magacin"])
 api_router.include_router(vin.router, prefix="/vin", tags=["VIN Dekoder"])
 api_router.include_router(fiscal.router, prefix="/fiscal", tags=["Fiskalizacija"])
 api_router.include_router(help.router, prefix="/help", tags=["Help"])
+api_router.include_router(settings.router, prefix="/settings", tags=["Podešavanja"])

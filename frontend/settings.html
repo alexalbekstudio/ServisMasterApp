@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ServisMaster OS — Podešavanja & Licenca</title>
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+    <header>
+        <div class="brand-wrapper">
+            <img src="/company-logo.png" alt="Logo" class="brand-logo sm-company-logo" style="display:none;">
+            <div class="brand-text-container">
+                <div class="brand-title-row">
+                    <h1 class="sm-company-name">ServisMaster OS</h1>
+                    <span class="badge" id="settings-tier-badge">CORE EDITION</span>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <select id="sm-lang-switcher" style="padding:6px 10px; border-radius:8px; font-weight:700;">
+                <option value="sr">🇷🇸 SR</option>
+                <option value="en">🇬🇧 EN</option>
+            </select>
+            <button id="btn-logout" class="btn-secondary header-logout-btn" data-i18n="header.logout">Odjava</button>
+        </div>
+    </header>
+
+    <nav class="nav-links">
+        <a href="/" class="nav-link" data-i18n="nav.reception">Prijem Vozila</a>
+        <a href="/orders" class="nav-link" data-i18n="nav.orders">Nalozi u radu</a>
+        <a href="/dashboard" class="nav-link" data-i18n="nav.dashboard">Kontrolna Tabla</a>
+        <a href="/inventory" class="nav-link" data-i18n="nav.inventory">Magacin</a>
+        <a href="/reminders" class="nav-link" data-i18n="nav.reminders">SMS Podsetnici</a>
+        <a href="/settings" class="nav-link active" data-i18n="nav.settings">⚙️ Podešavanja</a>
+    </nav>
+
+    <main>
+        <form id="sm-settings-form" enctype="multipart/form-data">
+            <!-- 1. PODACI O AUTO-SERVISU I WHITE-LABEL LOGO -->
+            <section class="card">
+                <h2>🏢 Podaci o auto-servisu & Brendiranje (White-Label)</h2>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Naziv auto-servisa</label>
+                        <input type="text" name="company_name" id="set-company-name" placeholder="ServisMaster OS">
+                    </div>
+                    <div class="form-group">
+                        <label>PIB / Poreski broj</label>
+                        <input type="text" name="company_pib" id="set-company-pib" placeholder="100000000">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Adresa i grad</label>
+                        <input type="text" name="company_address" id="set-company-address" placeholder="Ulica i broj, Grad">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon servisa</label>
+                        <input type="text" name="company_phone" id="set-company-phone" placeholder="060 123 4567">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Tekući račun (za NBS IPS QR kod)</label>
+                        <input type="text" name="company_bank_acc" id="set-company-bank" placeholder="160-0000000000000-00">
+                    </div>
+                    <div class="form-group">
+                        <label>Valuta prikaza</label>
+                        <select name="currency_base" id="set-currency">
+                            <option value="RSD">RSD (din)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="BAM">BAM (KM)</option>
+                            <option value="USD">USD ($)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Logo servisa i Favicon (PNG/JPG — Ultimate paket)</label>
+                        <input type="file" name="company_logo" id="set-company-logo" accept="image/png,image/jpeg,image/webp">
+                        <div style="margin-top:8px; display:flex; align-items:center; gap:12px;">
+                            <img src="/company-logo.png" class="sm-company-logo" style="max-height:40px; display:none; border-radius:6px; background:#fff; padding:4px;">
+                            <button type="button" id="btn-remove-logo" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;">Ukloni logo</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Licencni ključ (Activation Key)</label>
+                        <input type="text" name="license_key" id="set-license-key" placeholder="SM-XXXX-XXXX-XXXX" style="font-family:monospace; font-weight:700; text-transform:uppercase;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. OBD-II & BLUETOOTH DIJAGNOSTIKA -->
+            <section class="card">
+                <h2>🔌 OBD-II & Bluetooth Čitač Grešaka (ELM327)</h2>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Režim povezivanja dijagnostike</label>
+                        <select name="obd_mode" id="set-obd-mode">
+                            <option value="simulation">Simulacija / Ručni unos DTC kodova (Bez hardvera)</option>
+                            <option value="web_bluetooth">Web Bluetooth (ELM327 BLE direktno iz pretraživača)</option>
+                            <option value="serial_com">USB / Bluetooth Serial COM Port (ELM327)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>COM Port (za Serial/Bluetooth režim)</label>
+                        <input type="text" name="obd_com_port" id="set-obd-port" placeholder="COM3 ili /dev/rfcomm0">
+                    </div>
+                    <div class="form-group">
+                        <label>Baudrate</label>
+                        <select name="obd_baudrate" id="set-obd-baud">
+                            <option value="38400">38400 (Standard ELM327)</option>
+                            <option value="115200">115200 (Brzi ELM327 v2.1)</option>
+                            <option value="9600">9600</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+                    <button type="button" id="btn-test-obd" class="btn-secondary">🔍 Testiraj OBD-II / Očitaj greške</button>
+                    <button type="button" id="btn-web-bt" class="btn-secondary">📶 Upari Bluetooth OBD uređaj (Chrome/Edge)</button>
+                </div>
+                <div id="obd-test-result" style="margin-top:10px; font-size:0.85rem;"></div>
+            </section>
+
+            <!-- 3. FISKALIZACIJA (PFR) -->
+            <section class="card">
+                <h2>🧾 Fiskalizacija i Računi (PFR Podešavanja)</h2>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Način izdavanja računa</label>
+                        <select name="fiscal_mode" id="set-fiscal-mode">
+                            <option value="internal">Interni servisni račun + NBS IPS QR (Bez PFR kase)</option>
+                            <option value="lpfr">Lokalni PFR uređaj (LPFR — eFiskalizacija)</option>
+                            <option value="vpfr">Cloud / Virtuelni PFR (VPFR)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>PFR API URL</label>
+                        <input type="text" name="fiscal_pfr_url" id="set-fiscal-url" placeholder="http://localhost:8989/api/v3/invoices">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>PAC kod (PFR pristupni kod)</label>
+                        <input type="password" name="fiscal_pac" id="set-fiscal-pac" placeholder="Unesite PAC ako koristite LPFR">
+                    </div>
+                    <div class="form-group">
+                        <label>Kasir / Serviser na računu</label>
+                        <input type="text" name="fiscal_cashier" id="set-fiscal-cashier" placeholder="Serviser 1">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. SMTP EMAIL ALARMI -->
+            <section class="card">
+                <h2>📧 SMTP Podešavanja za Email / Podsetnike</h2>
+                <div class="row">
+                    <div class="form-group">
+                        <label>SMTP Host</label>
+                        <input type="text" name="smtp_host" id="set-smtp-host" placeholder="smtp.gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP Port</label>
+                        <input type="number" name="smtp_port" id="set-smtp-port" placeholder="587">
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP Email</label>
+                        <input type="email" name="smtp_user" id="set-smtp-user" placeholder="vas-email@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>App Password</label>
+                        <input type="password" name="smtp_pass" id="set-smtp-pass" placeholder="•••• •••• •••• ••••">
+                    </div>
+                </div>
+            </section>
+
+            <button type="submit" class="btn-primary btn-submit-order">💾 Sačuvaj sva podešavanja</button>
+        </form>
+    </main>
+
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/settings.js"></script>
+    <script src="/static/js/i18n.js"></script>
+</body>
+</html>

@@ -362,3 +362,107 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Eksportuj za korišćenje u drugim fajlovima
 window.I18n = I18n;
+
+// =====================================================
+// GLOBALNI WHITE-LABEL, LICENCIRANJE (CORE/PRO/ULTIMATE) I OBD-II
+// =====================================================
+TRANSLATIONS.sr["nav.settings"] = "⚙️ Podešavanja";
+TRANSLATIONS.en["nav.settings"] = "⚙️ Settings";
+
+window.applyServisMasterBrandingAndTiers = function (settings, hasCustomLogo) {
+    const compName = (settings && settings.company_name && settings.company_name.trim())
+        ? settings.company_name.trim()
+        : "ServisMaster OS";
+    const tier = ((settings && settings.license_tier) || "core").toLowerCase();
+
+    // 1. Zameni stari Studio logo i naziv servisa na svim stranicama
+    document.querySelectorAll(".brand-subtext-img").forEach(el => el.style.display = "none");
+    document.querySelectorAll(".brand-logo").forEach(img => {
+        if (hasCustomLogo) {
+            img.src = "/company-logo.png?t=" + Date.now();
+            img.style.display = "inline-block";
+        } else {
+            img.style.display = "none";
+        }
+    });
+
+    const mainTitle = document.querySelector("header h1");
+    if (mainTitle && (mainTitle.textContent.includes("ServisMaster") || mainTitle.classList.contains("sm-company-name"))) {
+        mainTitle.textContent = compName;
+    }
+
+    // 2. U navigaciji sakrij /admin i dodaj /settings ako ne postoji
+    const nav = document.querySelector("nav.nav-links");
+    if (nav) {
+        nav.querySelectorAll('a[href="/admin"]').forEach(a => a.style.display = "none");
+        if (!nav.querySelector('a[href="/settings"]')) {
+            const link = document.createElement("a");
+            link.href = "/settings";
+            link.className = "nav-link" + (window.location.pathname === "/settings" ? " active" : "");
+            link.setAttribute("data-i18n", "nav.settings");
+            link.textContent = window.I18n ? I18n.t("nav.settings") : "⚙️ Podešavanja";
+            nav.appendChild(link);
+        }
+    }
+
+    // 3. Zaključavanje funkcionalnosti po komercijalnim paketima
+    const isProOrAbove = tier === "pro" || tier === "ultimate";
+    const isUltimate = tier === "ultimate";
+
+    // CORE (49€): sakriva OCR kameru, barkod skenere, PDF izvoz, Kontrolnu tablu i SMS podsetnike
+    document.querySelectorAll("#btn-open-live-cam, #btn-scan-barcode, #btn-scan-part-item, .btn-open-pdf, .btn-open-pdf-en, .btn-whatsapp").forEach(el => {
+        el.style.display = isProOrAbove ? "" : "none";
+    });
+    if (nav) {
+        nav.querySelectorAll('a[href="/dashboard"], a[href="/reminders"]').forEach(a => {
+            a.style.display = isProOrAbove ? "" : "none";
+        });
+    }
+
+    // ULTIMATE (179€): otključava White-Label upload logotipa i LPFR/VPFR fiskalizaciju
+    const logoInput = document.getElementById("set-company-logo");
+    if (logoInput) logoInput.disabled = !isUltimate;
+    const fiscalModeSel = document.getElementById("set-fiscal-mode");
+    if (fiscalModeSel && !isUltimate) {
+        fiscalModeSel.value = "internal";
+        fiscalModeSel.querySelectorAll('option[value="lpfr"], option[value="vpfr"]').forEach(opt => opt.disabled = true);
+    }
+};
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const res = await fetch("/api/v1/settings?t=" + Date.now());
+        if (res.ok) {
+            const { settings, hasCustomLogo } = await res.json();
+            window.SM_SETTINGS = settings;
+            window.applyServisMasterBrandingAndTiers(settings, hasCustomLogo);
+        }
+    } catch (e) {}
+
+    // Dodaj brzo OBD-II dugme na stranici Nalozi u radu (orders.html) za Pro i Ultimate pakete
+    if (window.location.pathname === "/orders") {
+        const header = document.querySelector("header");
+        const logoutBtn = header && header.querySelector("#btn-logout");
+        if (header && !document.getElementById("btn-quick-obd")) {
+            const obdBtn = document.createElement("button");
+            obdBtn.id = "btn-quick-obd";
+            obdBtn.type = "button";
+            obdBtn.className = "btn-secondary header-logout-btn";
+            obdBtn.style.marginRight = "8px";
+            obdBtn.textContent = "🔌 OBD-II";
+            obdBtn.title = "Očitaj DTC greške sa vozila";
+            obdBtn.addEventListener("click", async () => {
+                try {
+                    const res = await fetch("/api/v1/settings/obd/scan");
+                    const data = await res.json();
+                    if (!res.ok) return alert(data.detail || "OBD greška");
+                    const msg = (data.dtc || []).map(d => `• ${d.code}: ${d.description}`).join("\n");
+                    alert(`OBD-II Dijagnostika (${data.mode.toUpperCase()}):\n\n${msg || "Nema grešaka (0 DTC)."}`);
+                } catch (err) {
+                    alert("Greška pri OBD-II skeniranju.");
+                }
+            });
+            header.insertBefore(obdBtn, logoutBtn || null);
+        }
+    }
+});

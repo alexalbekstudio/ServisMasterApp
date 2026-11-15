@@ -35,6 +35,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.responses import FileResponse, Response
+from app.api.v1.endpoints.settings import LOGO_PATH
+
+@app.get("/company-logo.png", tags=["Branding"])
+def serve_company_logo():
+    if LOGO_PATH.exists():
+        return FileResponse(
+            str(LOGO_PATH),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+        )
+    return Response(status_code=404)
+
+@app.get("/favicon.ico", tags=["Branding"])
+def serve_favicon():
+    if LOGO_PATH.exists():
+        return FileResponse(
+            str(LOGO_PATH),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+        )
+    empty_png = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82"
+    return Response(content=empty_png, media_type="image/png")
+
 # 1. API Rute
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
@@ -58,9 +80,9 @@ if FRONTEND_DIR.exists():
     def serve_frontend_root():
         return FileResponse(str(FRONTEND_DIR / "index.html"))
 
-    @app.get("/admin", tags=["Frontend"])
-    def serve_admin_page():
-        return FileResponse(str(FRONTEND_DIR / "admin.html"))
+    @app.get("/settings", tags=["Frontend"])
+    def serve_settings_page():
+        return FileResponse(str(FRONTEND_DIR / "settings.html"))
 
     @app.get("/login", tags=["Frontend"])
     def serve_login_page():
