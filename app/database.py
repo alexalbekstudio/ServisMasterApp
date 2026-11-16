@@ -18,14 +18,19 @@ if IS_DESKTOP:
     print("🟢 ServisMasterOS pokrenut u DESKTOP modu (SQLite)")
 else:
     # Originalni PostgreSQL za Server
-    SQLALCHEMY_DATABASE_URL = settings.database_url
+    SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
+    
+    # SQLAlchemy zahteva postgresql:// umesto postgres://
+    if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+        SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
     engine = create_engine(
         SQLALCHEMY_DATABASE_URL,
         pool_pre_ping=True,
         pool_size=10,
         max_overflow=20,
     )
-    print("🔵 ServisMasterOS pokrenut u SERVER modu (PostgreSQL)")
+    print(f"🔵 ServisMasterOS pokrenut u SERVER modu (PostgreSQL)")
 
 SessionLocal = sessionmaker(
     autocommit=False,

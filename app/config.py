@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from pydantic import Field
 
 class Settings(BaseSettings):
     # ============================================
@@ -13,11 +13,12 @@ class Settings(BaseSettings):
     # ============================================
     # DATABASE
     # ============================================
-    POSTGRES_SERVER: str = "localhost"
-    POSTGRES_PORT: int = 5434
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
-    POSTGRES_DB: str = "servismaster_db"
+    # Sada učitavamo kompletan URL. Ako ga nema (npr. kod tebe lokalno kad testiraš, ovo je default).
+    # U Coolify-u će ova vrednost biti automatski zamenjena onim što si uneo u Environment Variables.
+    DATABASE_URL: str = Field(
+        default="postgresql+psycopg2://postgres:postgres@localhost:5434/servismaster_db", 
+        env='DATABASE_URL'
+    )
 
     # ============================================
     # JWT
@@ -59,13 +60,6 @@ class Settings(BaseSettings):
     PFR_CERTIFICATE_PATH: str = ""
     PFR_PAK_CODE: str = ""
 
-    @property
-    def database_url(self) -> str:
-        return (
-            f"postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
-            f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-        )
-
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -73,6 +67,5 @@ class Settings(BaseSettings):
         extra="ignore",
         env_ignore_empty=True,
     )
-
 
 settings = Settings()
