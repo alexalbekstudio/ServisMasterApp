@@ -1,5 +1,6 @@
 import uuid
-from sqlalchemy import Column, String, Integer, Date, DateTime, ForeignKey, UniqueConstraint, Index, text
+from datetime import datetime
+from sqlalchemy import Column, String, Integer, Date, DateTime, ForeignKey, UniqueConstraint, Index
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -13,7 +14,6 @@ class Vehicle(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("uuid_generate_v4()"),
     )
     shop_id = Column(UUID(as_uuid=True), ForeignKey("shops.id", ondelete="CASCADE"), nullable=False)
     customer_id = Column(UUID(as_uuid=True), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False)
@@ -26,15 +26,14 @@ class Vehicle(Base):
     fuel_type = Column(String(30), nullable=True)
     last_registered_at = Column(Date, nullable=True)
     current_mileage = Column(Integer, default=0, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=text("NOW()"), nullable=True)
-    updated_at = Column(DateTime(timezone=True), server_default=text("NOW()"), onupdate=text("NOW()"), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=True)
+    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True)
 
     __table_args__ = (
         UniqueConstraint("shop_id", "license_plate", name="uq_vehicles_shop_license_plate"),
         Index("idx_vehicles_shop_plate", "shop_id", "license_plate"),
     )
 
-    # Relacije
     shop = relationship("Shop", back_populates="vehicles")
     customer = relationship("Customer", back_populates="vehicles")
     work_orders = relationship("WorkOrder", back_populates="vehicle")

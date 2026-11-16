@@ -1,5 +1,6 @@
 import uuid
-from sqlalchemy import Column, String, Boolean, DateTime, Text, ForeignKey, Index, text
+from datetime import datetime
+from sqlalchemy import Column, String, Boolean, DateTime, Text, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -13,7 +14,6 @@ class Customer(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("uuid_generate_v4()"),
     )
     shop_id = Column(UUID(as_uuid=True), ForeignKey("shops.id", ondelete="CASCADE"), nullable=False)
     full_name = Column(String(150), nullable=False)
@@ -23,14 +23,13 @@ class Customer(Base):
     company_name = Column(String(150), nullable=True)
     pib = Column(String(20), nullable=True)
     notes = Column(Text, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=text("NOW()"), nullable=True)
-    updated_at = Column(DateTime(timezone=True), server_default=text("NOW()"), onupdate=text("NOW()"), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=True)
+    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True)
 
     __table_args__ = (
         Index("idx_customers_shop_phone", "shop_id", "phone"),
     )
 
-    # Relacije
     shop = relationship("Shop", back_populates="customers")
     vehicles = relationship("Vehicle", back_populates="customer", cascade="all, delete-orphan")
     notifications = relationship("NotificationLog", back_populates="customer")

@@ -1,5 +1,6 @@
 import uuid
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, UniqueConstraint, text
+from datetime import datetime
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -11,11 +12,11 @@ from app.models.enums import UserRole
 class User(Base):
     __tablename__ = "users"
 
+    # Uklonjen PostgreSQL specifičan uuid_generate_v4()
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("uuid_generate_v4()"),
     )
     shop_id = Column(UUID(as_uuid=True), ForeignKey("shops.id", ondelete="CASCADE"), nullable=False)
     email = Column(String(120), nullable=False)
@@ -25,8 +26,10 @@ class User(Base):
     role = Column(SQLEnum(UserRole, name="user_role"), default=UserRole.MECHANIC, nullable=True)
     theme_preference = Column(String(10), default="auto", nullable=True)
     is_active = Column(Boolean, default=True, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=text("NOW()"), nullable=True)
-    updated_at = Column(DateTime(timezone=True), server_default=text("NOW()"), onupdate=text("NOW()"), nullable=True)
+    
+    # Zamenjeno računanje vremena univerzalnim metodama
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=True)
+    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True)
 
     __table_args__ = (
         UniqueConstraint("shop_id", "email", name="uq_users_shop_email"),

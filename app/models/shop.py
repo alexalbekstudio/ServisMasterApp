@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from sqlalchemy import Column, String, Boolean, DateTime, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -13,7 +14,6 @@ class Shop(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("uuid_generate_v4()"),
     )
     name = Column(String(150), nullable=False)
     pib = Column(String(20), nullable=True)
@@ -26,8 +26,10 @@ class Shop(Base):
     sms_sender_name = Column(String(11), default="SERVIS", nullable=True)
     bank_account = Column(String(30), nullable=True)
     is_active = Column(Boolean, default=True, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=text("NOW()"), nullable=True)
-    updated_at = Column(DateTime(timezone=True), server_default=text("NOW()"), onupdate=text("NOW()"), nullable=True)
+    
+    # OVO JE ISPRAVLJENO: Koristi se univerzalno računanje vremena
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=True)
+    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True)
 
     # Relacije
     users = relationship("User", back_populates="shop", cascade="all, delete-orphan")
