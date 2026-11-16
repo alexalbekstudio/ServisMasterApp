@@ -20,9 +20,12 @@ else:
     # Originalni PostgreSQL za Server
     SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
     
-    # SQLAlchemy zahteva postgresql:// umesto postgres://
-    if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
-        SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    # Forsiramo psycopg2 drajver bez obzira na to šta Coolify pošalje
+    if SQLALCHEMY_DATABASE_URL:
+        if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+            SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
+        elif SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):
+            SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
 
     engine = create_engine(
         SQLALCHEMY_DATABASE_URL,
@@ -30,7 +33,7 @@ else:
         pool_size=10,
         max_overflow=20,
     )
-    print(f"🔵 ServisMasterOS pokrenut u SERVER modu (PostgreSQL)")
+    print("🔵 ServisMasterOS pokrenut u SERVER modu (PostgreSQL)")
 
 SessionLocal = sessionmaker(
     autocommit=False,
