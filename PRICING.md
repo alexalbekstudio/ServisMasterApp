@@ -4,10 +4,10 @@
 
 ## Pregled paketa
 
-| Paket | Cena | Trial | Korisnika | Naloga/mesec | Podrška |
-|---|---|---|---|---|---|
-| **Basic** | 2.900 RSD/mes | 14 dana | 1 | 50 | Email |
-| **Pro** | 5.900 RSD/mes | 14 dana | 5 | 300 | Email + Telefon |
+| Paket          | Cena           | Trial   | Korisnika    | Naloga/mesec | Podrška              |
+|----------------|----------------|---------|--------------|--------------|----------------------|
+| **Basic**      | 2.900 RSD/mes  | 14 dana | 1            | 50           | Email                |
+| **Pro**        | 5.900 RSD/mes  | 14 dana | 5            | 300          | Email + Telefon      |
 | **Enterprise** | 11.900 RSD/mes | 14 dana | Neograničeno | Neograničeno | Prioritena + On-site |
 
 ---
@@ -71,13 +71,13 @@
 
 ## Dodaci (Add-ons)
 
-| Dodatak | Cena |
-|---|---|
-| Dodatni korisnik | 500 RSD/mes |
-| Dodatnih 100 naloga | 1.000 RSD/mes |
-| Dodatnih 100 SMS poruka | 800 RSD/mes |
+| Dodatak                   | Cena          |
+|---------------------------|---------------|
+| Dodatni korisnik          | 500 RSD/mes   |
+| Dodatnih 100 naloga       | 1.000 RSD/mes |
+| Dodatnih 100 SMS poruka   | 800 RSD/mes   |
 | Fiskalizacija (Basic/Pro) | 2.000 RSD/mes |
-| Custom razvoj | Po dogovoru |
+| Custom razvoj             | Po dogovoru   |
 
 ---
 
