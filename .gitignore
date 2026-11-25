@@ -11,3 +11,5 @@ dist/
 
 electron_runtime.zip
 servismaster_desktop.db
+.bat
+.db
